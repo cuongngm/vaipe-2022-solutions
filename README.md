@@ -1,12 +1,12 @@
 # vaipe-2022-solutions
 ### Pipeline
 <!--
-![](dataset/zz.png)
-![](dataset/zz.png)
+![](assets/zz.png)
+![](assets/zz.png)
 -->
 
 <div align=center>
-<img src="dataset/zz.png" width="800" height="300" />
+<img src="assets/zz.png" width="800" height="300" />
 </div>
 
 ###  Install
