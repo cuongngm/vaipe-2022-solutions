@@ -1,7 +1,6 @@
 data
 src/weights
 src/yolov5
-src
 src1/checkpoints
 checkpoints
 src1/lightning_logs
