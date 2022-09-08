@@ -1,2 +1,2 @@
-cd src1
-python train.py
+cd src
+python3 train.py

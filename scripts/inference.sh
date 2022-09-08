@@ -1,3 +1,3 @@
 # create drugdict
-cd src1
-python infer.py
+cd src
+python3 infer.py

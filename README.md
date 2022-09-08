@@ -13,7 +13,7 @@
 Tạo docker image từ dockerfile và run docker container
 ```shell
 docker build -t vaipe .
-docker run -d -it --name ai4vn-teamUtmostlimit --mount source=/mnt/disk1/AI4VN_DATA,target=/app/data vaipe:latest
+docker run -d -it --name ai4vn-teamVCintership --mount source=/mnt/disk1/AI4VN_DATA,target=/app/data vaipe:latest
 ```
 
 Bước này dùng để cài đặt các thư viện cần thiết và tải về các file trọng số của mô hình
@@ -46,6 +46,13 @@ Cấu trúc thư mục sau khi chạy như sau:
     |---pill_recog  # dung de training trich rut dac trung anh vien thuoc
     |---drug_dict.json  # map ten thuoc voi id thuoc
     |---cuong_mapping.json  # map cac thuoc co trong don voi anh don thuoc
+    |---crop/ # data dung de train va inference final model
+        |---crop_train/
+        |---crop_val/
+        |---crop_test/
+        |---train_crop.csv
+        |---val_crop.csv
+        |---test_crop.csv
 ```
 ###  Training
 Đối với task phát hiện tên thuốc trong đơn, training model yolov5s theo repo yolov5 với data ở folder pres_yolo thu được weight pres.pt
