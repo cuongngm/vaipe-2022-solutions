@@ -1,4 +1,5 @@
 data
+.idea
 src/weights
 src/yolov5
 src1/checkpoints
