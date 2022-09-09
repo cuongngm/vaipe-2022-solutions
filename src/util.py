@@ -68,7 +68,7 @@ def create_drugdict():
     reg_model = PresOCR()
     det_model = torch.hub.load('ultralytics/yolov5', 'custom', path='../checkpoints/pres.pt', force_reload=True)
     all_pres_path = []
-    root = '../data/public_test_new/prescription/image'
+    root = '../data/public_test/prescription/image'
     with open('../data/drug_dict.json', 'r') as fr:
         datas = json.load(fr)
     for filename in os.listdir(root):

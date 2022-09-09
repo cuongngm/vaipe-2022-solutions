@@ -113,8 +113,8 @@ if __name__ == '__main__':
     # data
     df_train = pd.read_csv('../data/crop/train_crop.csv')
     df_val = pd.read_csv('../data/crop/val_crop.csv')
-    pres_image_test = '../data/public_test_new/prescription/image'
-    pill_image_test = '../data/public_test_new/pill/image'
+    pres_image_test = '../data/public_test/prescription/image'
+    pill_image_test = '../data/public_test/pill/image'
     
     # drug_mapping = '../data/giang_mapping.npy'
     # drug_mapping = np.load(drug_mapping, allow_pickle=True)
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         drug_mapping = json.load(fr)
 
     # inference    
-    pill_pres_map = '../data/public_test_new/pill_pres_map.json'
+    pill_pres_map = '../data/public_test/pill_pres_map.json'
     results = []
     with open(pill_pres_map, 'r') as fr:
         datas = json.load(fr)

@@ -13,7 +13,7 @@
 Tạo docker image từ dockerfile và run docker container
 ```shell
 docker build -t vaipe .
-docker run -d -it --name ai4vn-teamVCintership --mount source=/mnt/disk1/AI4VN_DATA,target=/app/data vaipe:latest
+docker run -d -it --name ai4vn-teamVCintership -v [path to data root]:/app/data vaipe:latest
 ```
 
 Bước này dùng để cài đặt các thư viện cần thiết và tải về các file trọng số của mô hình
