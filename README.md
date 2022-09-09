@@ -54,6 +54,8 @@ Cấu trúc thư mục sau khi chạy như sau:
         |---val_crop.csv
         |---test_crop.csv
 ```
+Dữ liệu quan trọng nhất dùng để inference final model nằm ở trong folder crop/crop_test chứa tập các ảnh viên thuốc sau khi cắt và crop/test_crop.csv chứa đường dẫn của ảnh, thu được sau khi chạy model detect pill ở lệnh prepare.sh, nên bắt buộc phải có 2 path này.
+
 ###  Training
 Đối với task phát hiện tên thuốc trong đơn, training model yolov5s theo repo yolov5 với data ở folder pres_yolo thu được weight pres.pt
 

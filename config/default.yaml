@@ -5,7 +5,7 @@ test_csv: '../data/crop/test_crop.csv'
 encoder_classes_path: '../data/encoder_classes.npy'
 image_size: 224
 # model
-model_name: 'tf_efficientnet_b7_ns'
+model_name: 'convnext_large_384_in22ft1k'
 pretrained: True
 drop_rate: 0.0
 embedding_size: 512
