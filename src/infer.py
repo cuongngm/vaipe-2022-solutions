@@ -10,7 +10,7 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import LabelEncoder, normalize
 from sklearn.neighbors import NearestNeighbors
 
-from dataset import LitDataModule
+from dataset import LitDataModule, PillDataset
 from model import LitModule
 from config import load_config
 
@@ -91,15 +91,22 @@ def get_embeddings(
 
 if __name__ == '__main__':
     cfg = load_config('../config/default.yaml')
-    train_df = pd.read_csv('../data/crop/train_crop.csv')
-    encoder = LabelEncoder()
-    train_df['label'] = encoder.fit_transform(train_df['label'])
-    np.save('../data/encoder_classes.npy', encoder.classes_)
+    
+    # train_df = pd.read_csv('../data/crop/train_crop.csv')
+    # encoder = LabelEncoder()
+    # train_df['label'] = encoder.fit_transform(train_df['label'])
+    # np.save('../data/encoder_classes.npy', encoder.classes_)
     checkpoint_path = '../checkpoints/convnext_large_384_in22ft1k_224.ckpt'
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     module = load_eval_module(checkpoint_path, device)
     print('load model sucessfull!!!')
-    train_dl, val_dl, test_dl = load_dataloaders(
+    load_from = True
+    if load_from:
+        test_df = pd.read_csv('../data/crop/test_crop.csv')
+        test_dataset = PillDataset(test_df)
+        test_dl = DataLoader(test_dataset, batch_size=cfg.batch_size, num_workers=cfg.num_workers)
+    else:
+        train_dl, val_dl, test_dl = load_dataloaders(
             train_csv='../data/crop/train_crop.csv',
             val_csv='../data/crop/val_crop.csv',
             test_csv='../data/crop/test_crop.csv',
@@ -108,14 +115,23 @@ if __name__ == '__main__':
             num_workers=cfg.num_workers,
             )
     print('load data sucessfull!!!')
-    ENCODER_CLASSES_PATH = cfg.encoder_classes_path
-    encoder = load_encoder()
-    train_image_names, train_embeddings, train_targets = get_embeddings(module, train_dl, encoder, stage="train")
-    val_image_names, val_embeddings, val_targets = get_embeddings(module, val_dl, encoder, stage="val")
-    test_image_names, test_embeddings, test_targets = get_embeddings(module, test_dl, encoder, stage="test")
-    print('get embedding sucessfull!!!')
-    # train_embeddings = np.concatenate([train_embeddings, val_embeddings])
-    # train_targets = np.concatenate([train_targets, val_targets])
+    # ENCODER_CLASSES_PATH = cfg.encoder_classes_path
+    encoder = LabelEncoder()
+    encoder.classes_ = np.arange(107)
+    if load_from:
+        test_image_names, test_embeddings, test_targets = get_embeddings(module, test_dl, encoder, stage="test")
+        train_embeddings = np.load('../checkpoints/train_embeddings.npy')
+        train_targets = np.load('../checkpoints/train_targets.npy')
+    else:
+        train_image_names, train_embeddings, train_targets = get_embeddings(module, train_dl, encoder, stage="train")
+        val_image_names, val_embeddings, val_targets = get_embeddings(module, val_dl, encoder, stage="val")
+        test_image_names, test_embeddings, test_targets = get_embeddings(module, test_dl, encoder, stage="test")
+        print('get embedding sucessfull!!!')
+        train_embeddings = np.concatenate([train_embeddings, val_embeddings])
+        train_targets = np.concatenate([train_targets, val_targets])
+        np.save('../checkpoints/train_embeddings.npy', train_embeddings)
+        np.save('../checkpoints/train_targets.npy', train_targets)
+    print('load embedding successfull!!')
     neigh = NearestNeighbors(n_neighbors=cfg.n_neightbors, metric="cosine")
     neigh.fit(train_embeddings)
     test_dist, test_cosine_idx = neigh.kneighbors(test_embeddings, return_distance=True)
