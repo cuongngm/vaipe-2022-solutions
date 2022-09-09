@@ -151,7 +151,7 @@ if __name__ == '__main__':
     distances_df.drop(distances_df[distances_df.distances < cfg.threshold].index, inplace=True)
     distances_df = distances_df.reset_index(drop=True)
     print(distances_df.head())
-    distances_df.to_csv('saved/arcface.csv', index=False)
+    # distances_df.to_csv('saved/arcface.csv', index=False)
     df_detect = pd.read_csv('../data/detect_phase.csv')
     all_candidate = []
     list_img = df_detect['image_name'].tolist()
@@ -175,7 +175,7 @@ if __name__ == '__main__':
                 break
         all_candidate.append(list_candidate)
     df_detect['candidate'] = all_candidate
-    df_detect.to_csv('saved/merge.csv', index=False)
+    # df_detect.to_csv('saved/merge.csv', index=False)
     # drug_mapping = '../data/giang/drug_new.npy'
     # drug_mapping = np.load(drug_mapping, allow_pickle=True)
     # drug_mapping = drug_mapping.tolist()
@@ -230,6 +230,6 @@ if __name__ == '__main__':
     rs_df['y_min'] = df_detect['y_min']
     rs_df['x_max'] = df_detect['x_max']
     rs_df['y_max'] = df_detect['y_max']
-    rs_df.to_csv('saved/results.csv', index=False)
+    rs_df.to_csv('results.csv', index=False)
     print('End...')
     # end...
