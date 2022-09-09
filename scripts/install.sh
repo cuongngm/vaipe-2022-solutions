@@ -11,4 +11,8 @@ gdown --id 1itEm13CQQ8szInHgPKsVpC860sonTCO6
 # recog pill model
 # extract feature pill model
 gdown --id 1dclf-hsblbzUwXzMAW-N76GxkgNMzTVN
+# download train embeddings
+gdown --id 1fZGlfPSDGjumynedhh2Ehl_c0lweESuu
+# download train targets
+gdown --id 1kFWn0F9mWRe80zUB_-UUmJsKLDk40rG9
 cd ../

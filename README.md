@@ -66,6 +66,8 @@ Cấu trúc thư mục sau khi chạy như sau:
 bash scripts/train.sh
 ```
 ###  Inference
+Pipeline sử dụng mô hình trích rút đặc trưng dùng single model dựa trên backbone convnext-large + arcface đạt kết quả 0.63 trên tập val và pipeline kết hợp với mô hình classify đạt kết quả 0.64, do thời gian nộp code có hạn nên nhóm chưa thể merge code dựa trên pipeline 2
+
 ```shell
 bash scripts/inference.sh
 ```
