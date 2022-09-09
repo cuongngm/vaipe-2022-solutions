@@ -6,4 +6,4 @@ src1/checkpoints
 checkpoints
 src1/lightning_logs
 submission/*
-*.ipynb
+
