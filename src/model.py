@@ -2,12 +2,31 @@ import math
 import timm
 import torch
 import torch.nn as nn
+import pandas as pd
+import numpy as np
 import torch.nn.functional as F
 import pytorch_lightning as pl
 from typing import Callable, Dict, Optional, Tuple
 from timm.optim import create_optimizer_v2
 
 
+class WarmupCosineLambda:
+    def __init__(self, warmup_steps: int, cycle_steps: int, decay_scale: float, exponential_warmup: bool = False):
+        self.warmup_steps = warmup_steps
+        self.cycle_steps = cycle_steps
+        self.decay_scale = decay_scale
+        self.exponential_warmup = exponential_warmup
+
+    def __call__(self, epoch: int):
+        if epoch < self.warmup_steps:
+            if self.exponential_warmup:
+                return self.decay_scale * pow(self.decay_scale, -epoch / self.warmup_steps)
+            ratio = epoch / self.warmup_steps
+        else:
+            ratio = (1 + math.cos(math.pi * (epoch - self.warmup_steps) / self.cycle_steps)) / 2
+        return self.decay_scale + (1 - self.decay_scale) * ratio
+    
+    
 class ArcMarginProduct(nn.Module):
     r"""Implement of large margin arc distance: :
     Args:
@@ -93,7 +112,13 @@ class LitModule(pl.LightningModule):
         self.model = timm.create_model(model_name, pretrained=pretrained, drop_rate=drop_rate)
         self.embedding = nn.Linear(self.model.get_classifier().in_features, embedding_size)
         self.model.reset_classifier(num_classes=0, global_pool="avg")
-
+        # in_features = self.model.get_classifier().in_features
+        # print('in features', in_features)
+        # self.pooling = GeM()
+        # self.embedding = nn.Sequential(
+        #                     nn.BatchNorm1d(in_features),
+        #                     nn.Linear(in_features, embedding_size)
+        #                     )
         self.arc = ArcMarginProduct(
             in_features=embedding_size,
             out_features=num_classes,
@@ -107,11 +132,14 @@ class LitModule(pl.LightningModule):
 
     def forward(self, images: torch.Tensor) -> torch.Tensor:
         features = self.model(images)
+        # pooled_features = self.pooling(features).flatten(1)
+        # embeddings = self.embedding(pooled_features)
         embeddings = self.embedding(features)
 
         return embeddings
 
     def configure_optimizers(self):
+        """
         optimizer = create_optimizer_v2(
             self.parameters(),
             opt=self.hparams.optimizer,
@@ -125,6 +153,13 @@ class LitModule(pl.LightningModule):
             steps_per_epoch=self.hparams.len_train_dl,
             epochs=self.hparams.epochs,
         )
+        """
+        optimizer = torch.optim.AdamW(self.parameters(), lr=1.0e-4)
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=6, eta_min=1e-7)
+        # warmup_steps = epochs * 0.2
+        # cycle_steps = epochs - warmup_steps
+        # lr_lambda = WarmupCosineLambda(warmup_steps, cycle_steps, 1.0e-2)
+        # scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
         scheduler = {"scheduler": scheduler, "interval": "step"}
 
         return [optimizer], [scheduler]

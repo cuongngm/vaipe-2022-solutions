@@ -27,7 +27,7 @@ class PresOCR(object):
         # self.config = Cfg.load_config_from_name("vgg_transformer")
         # self.config["weights"] = 'recognition/weights/new_transformer.pth'
         self.config = Cfg.load_config_from_name('vgg_transformer')
-        self.config['weights'] = '../checkpoints/transformerocr.pth'
+        self.config['weights'] = 'weight/transformerocr.pth'
         self.config["device"] = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         self.config["cnn"]["pretrained"] = False
         self.config["predictor"]["beamsearch"] = False
@@ -60,21 +60,26 @@ def pres_ocr(all_pres_path, det_model, reg_model):
         text = reg_model.recog(all_img_pil)
         pres_name = pres_path.split('/')[-1][:-4]
         drug[pres_name] = text
-        # print('name: {} === {}'.format(pres_name, text))
+        print('name: {} === {}'.format(pres_name, text))
     return drug
 
 
 def create_drugdict():
     reg_model = PresOCR()
-    det_model = torch.hub.load('ultralytics/yolov5', 'custom', path='../checkpoints/pres.pt', force_reload=True)
+    det_model = torch.hub.load('ultralytics/yolov5', 'custom', path='weight/pres.pt', force_reload=True)
+    det_model.conf = 0.5
     all_pres_path = []
-    root = '../data/public_test/prescription/image'
+    root = '../data/private_test/prescription/image'
     with open('../data/drug_dict.json', 'r') as fr:
         datas = json.load(fr)
     for filename in os.listdir(root):
         filepath = os.path.join(root, filename)
         all_pres_path.append(filepath)
     drugs = pres_ocr(all_pres_path, det_model, reg_model)
+    with open('../data/private_pill_in_pres.json', 'w') as fw:
+        json.dump(drugs, fw)
+    """
+    print('ocr done!!')
     pattern = '\d\)'
     cuong_mapping = dict()
     for k, v in tqdm(drugs.items()):
@@ -89,9 +94,9 @@ def create_drugdict():
                     print('checker pred: {} ====== gt: {}'.format(drug, data['drug_name']))
                     list_candidate.append(data['drug_id'])
         cuong_mapping[k] = list_candidate
-    with open('../data/cuong_mapping.json', 'w') as fw:
+    with open('../data/private_mapping.json', 'w') as fw:
         json.dump(cuong_mapping, fw)
-
+    """
 
 def remove_noise_boxes(img, boxes):
     # remove box o ria cac anh

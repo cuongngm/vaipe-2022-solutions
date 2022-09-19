@@ -1,4 +1,5 @@
 import torch
+import pandas as pd
 import pytorch_lightning as pl
 from dataset import LitDataModule
 from model import LitModule
@@ -19,7 +20,7 @@ def train(
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
     )
-    
+    df = pd.read_csv(cfg.train_csv)
     datamodule.setup()
     len_train_dl = len(datamodule.train_dataloader())
 
@@ -37,7 +38,8 @@ def train(
         learning_rate=cfg.learning_rate,
         weight_decay=cfg.weight_decay,
         len_train_dl=len_train_dl,
-        epochs=cfg.max_epochs
+        epochs=cfg.max_epochs,
+        # df = df
     )
     
     model_checkpoint = ModelCheckpoint(
