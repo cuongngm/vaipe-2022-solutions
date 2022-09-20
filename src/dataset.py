@@ -18,9 +18,9 @@ def merge_data_train(df1, df2):
     df.append(df1)
     df.append(df2)
     train_df = pd.concat(df, ignore_index=True)
-    skf = StratifiedKFold(n_splits=10)
-    for fold, (_, val_) in enumerate(skf.split(X=train_df, y=train_df.label)):
-        train_df.loc[val_, "kfold"] = fold
+    # skf = StratifiedKFold(n_splits=10)
+    # for fold, (_, val_) in enumerate(skf.split(X=train_df, y=train_df.label)):
+    #     train_df.loc[val_, "kfold"] = fold
     return train_df
     
 

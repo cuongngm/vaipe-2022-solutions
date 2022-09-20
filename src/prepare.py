@@ -195,7 +195,7 @@ def gen_datacsv_model_extract():
             val_rs.append([filepath, label])
     val_df = pd.DataFrame(val_rs, columns=['filepath', 'label'])
     val_df.to_csv('../data/crop/val_crop.csv', index=False)
-    
+    """ 
     print('test!!')
     test_rs = []
     for filename in os.listdir(os.path.join(root, test)):
@@ -203,7 +203,7 @@ def gen_datacsv_model_extract():
         test_rs.append([filepath, 0])
     test_df = pd.DataFrame(test_rs, columns=['filepath', 'label'])
     test_df.to_csv('../data/crop/test_crop.csv', index=False)
-    
+    """
     
 if __name__ == '__main__':
     # task 1
@@ -221,16 +221,16 @@ if __name__ == '__main__':
 
     Path('../data/pill_recog').mkdir(parents=True, exist_ok=True)
     print('get pill yolo')
-    get_pill_yolo(pill_label_train)
+    # get_pill_yolo(pill_label_train)
     print('get pres yolo')
-    get_pres_yolo(pres_label)
+    # get_pres_yolo(pres_label)
     print('get pill recog train')
     get_pill_recog(pill_image_val, pill_label_val)
     print('get pill recog val')
     get_pill_recog_val('../data/public_val/pubval_groundtruth.csv')
     print('get pres recog')
-    get_pres_recog(pres_label)
+    # get_pres_recog(pres_label)
     print('create drugname dict')
-    create_drugdict()
+    # create_drugdict()
     print('gen csv data')
     gen_datacsv_model_extract()

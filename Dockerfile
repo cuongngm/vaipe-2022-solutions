@@ -10,4 +10,6 @@ RUN pip install --upgrade pip
 RUN mkdir /app
 ADD . /app
 WORKDIR /app
-RUN bash scripts/install.sh
+# RUN bash scripts/install.sh
+# RUN bash scripts/prepare.sh
+# RUN bash scripts/inference.sh

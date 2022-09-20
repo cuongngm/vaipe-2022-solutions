@@ -5,6 +5,7 @@ import cv2
 import pandas as pd
 import numpy as np
 import argparse
+from pathlib import Path
 from tqdm import tqdm
 from logult import setup_log
 from util import remove_noise_boxes
@@ -54,7 +55,8 @@ if __name__ == '__main__':
     pres_image_test = '../data/private_test/prescription/image'
     pill_image_test = '../data/private_test/pill/image'
     pill_pres_map = '../data/private_test/pill_pres_map.json'
-
+    Path('../data/crop').mkdir(parents=True, exist_ok=True)
+    Path('../data/crop/private_crop').mkdir(parents=True, exist_ok=True)
     with open(pill_pres_map, 'r') as fr:
         datas = json.load(fr)
     list_rs = []

@@ -133,7 +133,9 @@ if __name__ == '__main__':
     print('load data sucessfull!!!')
     
     ENCODER_CLASSES_PATH = cfg.encoder_classes_path
-    encoder = load_encoder()
+    # encoder = load_encoder()
+    encoder = LabelEncoder()
+    encoder.classes_ = np.arange(107)
     
     model_list = [# 'checkpoints/convnext_xlarge_384_in22ft1k_224-v1.ckpt',
                   '../checkpoints/convnext_large_384_in22ft1k_224.ckpt',
@@ -223,7 +225,7 @@ if __name__ == '__main__':
         
     df_detect['candidate'] = all_candidate
     df_detect.to_csv('saved/merge.csv', index=False)
-    drug_mapping = '../data/drug_private.npy'
+    drug_mapping = '../checkpoints/drug_private.npy'
     # drug_mapping = '../data/giang_mapping.npy'
     drug_mapping = np.load(drug_mapping, allow_pickle=True)
     drug_mapping = drug_mapping.tolist()

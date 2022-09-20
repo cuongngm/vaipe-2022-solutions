@@ -1,4 +1,5 @@
 # create drugdict
 cd src
-# python3 detect_pill.py
+python prepare.py
+python3 detect_pill.py
 python3 infer.py
