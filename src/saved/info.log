@@ -1,0 +1,19 @@
+[2022-09-19 17:06:15,700 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_large_384_in22ft1k_224.ckpt
+[2022-09-19 17:07:11,200 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_large_22k_1k_384.pth)
+[2022-09-19 17:20:22,752 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_xlarge_384_in22ft1k_224.ckpt
+[2022-09-19 17:40:45,203 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_large_384_in22ft1k_224.ckpt
+[2022-09-19 17:41:07,709 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_large_22k_1k_384.pth)
+[2022-09-19 17:49:17,303 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_xlarge_384_in22ft1k_224.ckpt
+[2022-09-19 17:49:51,865 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_xlarge_22k_1k_384_ema.pth)
+[2022-09-20 10:42:48,840 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_large_384_in22ft1k_224.ckpt
+[2022-09-20 10:43:39,665 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_large_22k_1k_384.pth)
+[2022-09-20 10:47:28,413 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_xlarge_384_in22ft1k_224.ckpt
+[2022-09-20 10:48:59,609 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_xlarge_22k_1k_384_ema.pth)
+[2022-09-20 11:10:31,877 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_large_384_in22ft1k_224.ckpt
+[2022-09-20 11:11:16,060 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_large_22k_1k_384.pth)
+[2022-09-20 11:15:04,908 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_xlarge_384_in22ft1k_224.ckpt
+[2022-09-20 11:16:16,394 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_xlarge_22k_1k_384_ema.pth)
+[2022-09-20 11:31:47,517 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_large_384_in22ft1k_224.ckpt
+[2022-09-20 11:32:06,424 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_large_22k_1k_384.pth)
+[2022-09-20 11:37:18,267 - fsspec.local - DEBUG] - open file: /data1/ocr_ie/vaipe/src/../checkpoints/convnext_xlarge_384_in22ft1k_224.ckpt
+[2022-09-20 11:37:40,185 - timm.models.helpers - INFO] - Loading pretrained weights from url (https://dl.fbaipublicfiles.com/convnext/convnext_xlarge_22k_1k_384_ema.pth)

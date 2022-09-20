@@ -10,12 +10,13 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import LabelEncoder, normalize
 from sklearn.neighbors import NearestNeighbors
 
-from dataset import LitDataModule, PillDataset
+from dataset import LitDataModule, PillDataset, merge_data_train
 from model import LitModule
 from config import load_config
 from eval.run import evaler
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+from logult import setup_log
 
 
 # inference
@@ -93,6 +94,7 @@ def get_embeddings(
 
 if __name__ == '__main__':
     cfg = load_config('../config/default.yaml')
+    logger = setup_log('saved', 'info.log')
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     
     transform = {
@@ -119,8 +121,10 @@ if __name__ == '__main__':
                 ToTensorV2()], p=1.
                 )
         }
-    # train_df = pd.read_csv('../data/crop/train_crop.csv')
-    train_df = pd.read_csv('../data/kfold/all.csv')
+ 
+    train_df = pd.read_csv('../data/crop/train_crop.csv')
+    val_df = pd.read_csv('../data/crop/val_crop.csv')
+    train_df = merge_data_train(train_df, val_df)
     train_dataset = PillDataset(train_df, transform['train'])
     train_dl = DataLoader(train_dataset, batch_size=cfg.batch_size, num_workers=cfg.num_workers)
     test_df = pd.read_csv('../data/crop/private_crop.csv')
@@ -132,9 +136,9 @@ if __name__ == '__main__':
     encoder = load_encoder()
     
     model_list = [# 'checkpoints/convnext_xlarge_384_in22ft1k_224-v1.ckpt',
-                  'checkpoints/convnext_large_384_in22ft1k_224.ckpt',
+                  '../checkpoints/convnext_large_384_in22ft1k_224.ckpt',
                   # 'checkpoints/convnext_large_384_in22ft1k_224-v1.ckpt',
-                  'checkpoints/convnext_xlarge_384_in22ft1k_224.ckpt',
+                  '../checkpoints/convnext_xlarge_384_in22ft1k_224.ckpt',
                   # 'checkpoints_v3/tf_efficientnet_b7_ns_224.ckpt'
                  ]
     train_image_list = []
@@ -158,7 +162,8 @@ if __name__ == '__main__':
     train_embeddings = np.concatenate(train_embeddings_list, axis=1)
     test_embeddings = np.concatenate(test_embeddings_list, axis=1)
     
-    # np.save('saved/train_embed.npy', train_embeddings)
+    np.save('saved/train_embeddings.npy', train_embeddings)
+    np.save('saved/train_targets.npy', train_targets)
     # train_embeddings = np.load('saved/train_embed.npy')
     print('get size concat', train_embeddings.shape)
     # checkpoint_path = 'checkpoints/convnext_large_384_in22ft1k_224.ckpt'
@@ -203,30 +208,10 @@ if __name__ == '__main__':
     distances_df = distances_df.reset_index(drop=True)
     print(distances_df.head())
     distances_df.to_csv('saved/arcface.csv', index=False)
-    df_detect = pd.read_csv('../src/detect_phase_private.csv')
+    df_detect = pd.read_csv('../data/detect_phase_private.csv')
     all_candidate = []
     list_img = df_detect['image_name'].tolist()
     for image_name in tqdm(list_img):
-        """
-        # print(image_name)
-        list_candidate = []
-        check_bef = 0
-        check_af = 0
-        for idx2 in range(len(distances_df)):
-            if distances_df.loc[idx2, 'image'] == image_name:
-                check_bef = 1
-                u = dict()
-                u[distances_df.loc[idx2, 'target']] = distances_df.loc[idx2, 'distances']
-                list_candidate.append(u)
-            else:
-                if check_bef == 1:
-                    check_af = 1
-                else:
-                    check_af = 0
-            if check_af == 1:
-                break
-        all_candidate.append(list_candidate)
-        """
         list_candidate = []
         sub_df = distances_df[distances_df.image == image_name].reset_index(drop=True)
         u = dict()
@@ -238,7 +223,7 @@ if __name__ == '__main__':
         
     df_detect['candidate'] = all_candidate
     df_detect.to_csv('saved/merge.csv', index=False)
-    drug_mapping = '../data/giang/drug_private.npy'
+    drug_mapping = '../data/drug_private.npy'
     # drug_mapping = '../data/giang_mapping.npy'
     drug_mapping = np.load(drug_mapping, allow_pickle=True)
     drug_mapping = drug_mapping.tolist()
@@ -318,8 +303,16 @@ if __name__ == '__main__':
     list_pred = []
     list_distance = []
     list_pill_in_res = []
-    with open('../data/private_test/reverse.json', 'r') as fr:
-        reverse = json.load(fr)
+    reverse = dict()
+    with open('../data/private_test/pill_pres_map.json', 'r') as fr:
+        data = json.load(fr)
+        for k, v in data.items():
+            for pill in v:
+                if ' (1)' in pill:
+                    continue
+                reverse[pill[:-4]] = k
+    # with open('../data/private_test/reverse.json', 'r') as fr:
+    #     reverse = json.load(fr)
     for idx in tqdm(range(len(df_detect))):
         candidate = df_detect.loc[idx, 'candidate']
         pill_name = df_detect.loc[idx, 'image_name']
@@ -349,31 +342,13 @@ if __name__ == '__main__':
                 check = 1
                 pred_id = k
                 distance = v
-                if distance < 0.6:
-                    distance = 0.8
+                if distance < 0.5:
+                    distance = distance * 2
             if check == 1:
                 break
         if check == 0:
             pred_id = 107
             distance = cfg.re_conf
-        """
-        for can in candidate:
-            for k, v in can.items():
-                # if v < best_thresh:
-                #     continue
-                if int(k) in pill_id_in_pres:
-                    check = 1
-                    pred_id = k
-                    distance = v
-                    if distance < 0.6:
-                        distance = 0.8
-
-            if check == 1:
-                break
-        if check == 0:
-            pred_id = 107
-                distance = cfg.re_conf
-        """
         list_pred.append(pred_id)
         list_distance.append(distance)
 
@@ -389,8 +364,8 @@ if __name__ == '__main__':
     rs_df['y_min'] = df_detect['y_min']
     rs_df['x_max'] = df_detect['x_max']
     rs_df['y_max'] = df_detect['y_max']
-    rs_df.to_csv('saved/results.csv', index=False)
+    rs_df.to_csv('../submission/results.csv', index=False)
     print('End...')
-    # wmap, wmap50 = evaler('saved/results.csv', '../submission/gt_update.csv')
+    # wmap, wmap50 = evaler('submission/results.csv', '../submission/gt_update.csv')
     # print('wmap', wmap)
     # print('wmap50', wmap50)

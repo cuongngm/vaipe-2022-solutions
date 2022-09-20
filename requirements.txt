@@ -8,3 +8,4 @@ seaborn
 pytorch_lightning==1.5.10
 albumentations
 timm
+pycocotools

@@ -6,8 +6,7 @@ import pandas as pd
 import numpy as np
 import argparse
 from tqdm import tqdm
-from recog_inference import Stage2
-from logger_rewrite import setup_log
+from logult import setup_log
 from util import remove_noise_boxes
 
 
@@ -31,7 +30,7 @@ def detect(pill_img_path):
         boxes = list(map(int, boxes.tolist()))
         save_name = '{}_{}.jpg'.format(name[:-4], idx)
         crop = img[boxes[1]: boxes[3], boxes[0]: boxes[2]]
-        cv2.imwrite('../data/crop/giang_val_crop/{}_{}.jpg'.format(name[:-4], idx), crop)
+        cv2.imwrite('../data/crop/private_crop/{}_{}.jpg'.format(name[:-4], idx), crop)
         list_rs.append([save_name, conf, boxes[0], boxes[1], boxes[2], boxes[3]])
     # visualize
     """
@@ -50,16 +49,16 @@ def detect(pill_img_path):
         
 if __name__ == '__main__':
     # detect_pill_model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5/runs/train/exp7/weights/best.pt', force_reload=True)
-    detect_pill_model = torch.hub.load('./yolov7', 'custom', 'giang_weights/best_67.pt', source='local', force_reload=True)
+    detect_pill_model = torch.hub.load('WongKinYiu/yolov7', 'custom', '../checkpoints/best.pt', force_reload=True)
     detect_pill_model.conf = 0.5
-    pres_image_test = '../data/public_val/prescription/image'
-    pill_image_test = '../data/public_val/pill/image'
-    pill_pres_map = '../data/public_val/pill_pres_map.json'
+    pres_image_test = '../data/private_test/prescription/image'
+    pill_image_test = '../data/private_test/pill/image'
+    pill_pres_map = '../data/private_test/pill_pres_map.json'
 
     with open(pill_pres_map, 'r') as fr:
         datas = json.load(fr)
     list_rs = []
-    
+    """
     for idx, data in enumerate(datas):
         pres_json_file = data['pres']
         pres_img_name = pres_json_file.replace('.json', '.png')
@@ -77,8 +76,6 @@ if __name__ == '__main__':
     """
     for k, v in datas.items():
         for pill_img in v:
-            # if os.path.exists(os.path.join('../data/private_visualize', pill_img)):
-            #     continue
             if ' (1)' in pill_img:
                 continue
             pill_img_path = os.path.join(pill_image_test, pill_img)
@@ -86,9 +83,14 @@ if __name__ == '__main__':
             for r in rs:
                 print(r)
                 list_rs.append(r)
-    """
         
     df = pd.DataFrame(list_rs, columns=['image_name', 'confidence_score', 'x_min', 'y_min', 'x_max', 'y_max'])
-    df.to_csv('detect_phase_giang2.csv', index=False)
+    df.to_csv('../data/detect_phase_private.csv', index=False)
     
-        
+    test_rs = []
+    for filename in os.listdir('../data/crop/private_crop'):
+        filepath = '../' + 'data/crop/private_crop' + '/' + filename
+        test_rs.append([filepath, 0])
+    test_df = pd.DataFrame(test_rs, columns=['filepath', 'label'])
+    test_df.to_csv('../data/crop/private_crop.csv', index=False)
+ 
