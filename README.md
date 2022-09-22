@@ -13,7 +13,7 @@
 Tạo docker image từ dockerfile và run docker container
 ```shell
 docker build -t vaipe .
-docker run -d -it --name ai4vn-teamVCintership -v [path to data root]:/app/data vaipe:latest
+docker run -d -it --name [your name] -v [path to data root]:/app/data vaipe:latest
 docker exec -it [container name] bash
 ```
 
